@@ -77,12 +77,12 @@ public class TeamDAO {
         return teamList;
     }
 
-    public Team findOne() {
+    public Team findByOne() {
         Team team = null;
 
-        String findOne = "";
+        String findByOne = "";
         try {
-            PreparedStatement ps = conn.prepareStatement(findOne);
+            PreparedStatement ps = conn.prepareStatement(findByOne);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 team = new Team(

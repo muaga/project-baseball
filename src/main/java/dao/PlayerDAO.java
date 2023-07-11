@@ -73,12 +73,12 @@ public class PlayerDAO {
         return playerList;
     }
 
-    public Player findOne() {
+    public Player findByOne() {
         Player player = null;
 
-        String findOne = "";
+        String findByOne = "";
         try {
-            PreparedStatement ps = conn.prepareStatement(findOne);
+            PreparedStatement ps = conn.prepareStatement(findByOne);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 player = new Player(

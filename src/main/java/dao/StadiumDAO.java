@@ -15,22 +15,23 @@ public class StadiumDAO {
         this.conn = conn;
     }
 
-    public void insert() {
-        String insert = "";
+    public void insert(String name) {
+        String insert = "insert into stadium(name,created_at) values (?,now())";
         try {
             PreparedStatement ps = conn.prepareStatement(insert);
-            // 여기에 ? 값 넣기
+            ps.setString(1, name);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void update() {
-        String update = "";
+    public void update(String name, Integer id) {
+        String update = "update stadium set name =? where id=?";
         try {
             PreparedStatement ps = conn.prepareStatement(update);
-            // 여기에 ? 값 넣기
+            ps.setString(1, name);
+            ps.setInt(2, id);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,11 +39,11 @@ public class StadiumDAO {
 
     }
 
-    public void delete() {
-        String delete = "";
+    public void delete(Integer id) {
+        String delete = "delete from stadium where id=?";
         try {
             PreparedStatement ps = conn.prepareStatement(delete);
-            // 여기에 ? 값 넣기
+            ps.setInt(1, id);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,7 +53,7 @@ public class StadiumDAO {
     public List<Stadium> findByAll() {
         List<Stadium> stadiumList = new ArrayList<>();
 
-        String findByAll = "";
+        String findByAll = "select * from stadium";
         try {
             PreparedStatement ps = conn.prepareStatement(findByAll);
             ResultSet rs = ps.executeQuery();
@@ -71,12 +72,13 @@ public class StadiumDAO {
         return stadiumList;
     }
 
-    public Stadium findOne() {
+    public Stadium findByOne(Integer id) {
         Stadium stadium = null;
 
-        String findOne = "";
+        String findByOne = "select * from stadium where id = ?";
         try {
-            PreparedStatement ps = conn.prepareStatement(findOne);
+            PreparedStatement ps = conn.prepareStatement(findByOne);
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 stadium = new Stadium(

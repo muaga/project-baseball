@@ -8,7 +8,7 @@ public class DBConnection {
         // MySQL 연결 정보
         String url = "jdbc:mysql://localhost:3306/baseball";
         String username = "root";
-        String password = "(비밀번호))";
+        String password = "Tmffja1@";
 
         // JDBC 드라이버 로드
         try {

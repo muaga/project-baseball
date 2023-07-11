@@ -16,7 +16,7 @@ public class OutPlayerDAO {
     }
 
     public void insert() {
-        String insert = "";
+        String insert = "insert into out_player(name,created_at) values (?,now())";
         try {
             PreparedStatement ps = conn.prepareStatement(insert);
             // 여기에 ? 값 넣기
@@ -72,12 +72,12 @@ public class OutPlayerDAO {
         return outPlayerList;
     }
 
-    public OutPlayer findOne() {
+    public OutPlayer findByOne() {
         OutPlayer outPlayer = null;
 
-        String findOne = "";
+        String findByOne = "";
         try {
-            PreparedStatement ps = conn.prepareStatement(findOne);
+            PreparedStatement ps = conn.prepareStatement(findByOne);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 outPlayer = new OutPlayer(
