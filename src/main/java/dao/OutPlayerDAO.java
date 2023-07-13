@@ -3,10 +3,7 @@ package dao;
 import dto.OutPlayerRespDTO;
 import model.OutPlayer;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +42,7 @@ public class OutPlayerDAO {
 
     // playerId로 퇴출 목록에서 선수 삭제
     public void delete(Integer playerId) {
-        String delete = "delete from out_player where player_id=?";
+        String delete = "delete from out_player where player_id = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(delete);
             ps.setInt(1, playerId);
@@ -59,17 +56,17 @@ public class OutPlayerDAO {
     public List<OutPlayer> findByAll() {
         List<OutPlayer> outPlayerList = new ArrayList<>();
 
-        String findByAll = "select * from out_player";
+        String findByAll = "select * from out_player order by id asc ";
         try {
             PreparedStatement ps = conn.prepareStatement(findByAll);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                OutPlayer outPlayer = new OutPlayer(
-                        rs.getInt("id"),
-                        rs.getInt("player_id"),
-                        rs.getString("reason"),
-                        rs.getTimestamp("created_at")
-                );
+                OutPlayer outPlayer = OutPlayer.builder()
+                        .id(rs.getInt("id"))
+                        .playerId(rs.getInt("player_id"))
+                        .reason(rs.getString("reason"))
+                        .createdAt(rs.getTimestamp("created_at"))
+                        .build();
                 outPlayerList.add(outPlayer);
             }
 
@@ -80,21 +77,22 @@ public class OutPlayerDAO {
     }
 
     // playerId로 퇴출 선수 검색
+    // 수정..
     public OutPlayer findByPlayerId(Integer playerId) {
         OutPlayer outPlayer = null;
 
-        String findByOne = "select * from out_player where playerId = ?";
+        String findByPlayerId = "select * from out_player where player_id = ?";
         try {
-            PreparedStatement ps = conn.prepareStatement(findByOne);
+            PreparedStatement ps = conn.prepareStatement(findByPlayerId);
             ps.setInt(1, playerId);
             ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                outPlayer = new OutPlayer(
-                        rs.getInt("id"),
-                        rs.getInt("player_id"),
-                        rs.getString("reason"),
-                        rs.getTimestamp("created_at")
-                );
+            while (rs.next()) {
+                outPlayer = OutPlayer.builder()
+                        .id(rs.getInt("id"))
+                        .playerId(rs.getInt("player_id"))
+                        .reason(rs.getString("reason"))
+                        .createdAt(rs.getTimestamp("created_at"))
+                        .build();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,33 +103,32 @@ public class OutPlayerDAO {
     // outer join
     // player과 out_player 모두 검색
     public List<OutPlayerRespDTO> findByAllWithPlayer() {
-        List<OutPlayerRespDTO> outPlayerRespDtoList = new ArrayList<>();
+        List<OutPlayerRespDTO> outPlayerRespDTOList = new ArrayList<>();
 
         String findByAllWithPlayer = "select pl.id, pl.name, pl.position, opl.reason, opl.created_at\n" +
                 "from out_player as opl\n" +
                 "right outer join player as pl\n" +
                 "on opl.player_id = pl.id\n" +
-                "order by id asc;";
+                "order by id asc";
         try {
             PreparedStatement ps = conn.prepareStatement(findByAllWithPlayer);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                OutPlayerRespDTO outPlayerRespDTO = new OutPlayerRespDTO(
-                rs.getInt("id"),
-                rs.getString("name"),
-                rs.getString("position"),
-                rs.getString("reason"),
-                rs.getTimestamp("created_at")
+                OutPlayerRespDTO outPlayerRespDTO = OutPlayerRespDTO.builder()
+                        .id(rs.getInt("id"))
+                        .name(rs.getString("name"))
+                        .position(rs.getString("position"))
+                        .reason(rs.getString("reason"))
+                        .createdAt(rs.getTimestamp("created_at"))
+                        .build();
 
-                );
-                outPlayerRespDtoList.add(outPlayerRespDTO);
+                outPlayerRespDTOList.add(outPlayerRespDTO);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return outPlayerRespDtoList;
+        return outPlayerRespDTOList;
     }
 
 }
-

@@ -1,26 +1,21 @@
 package model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.sql.Timestamp;
 @Getter
-@Setter
-@AllArgsConstructor
+@ToString
 public class Stadium {
-
     private Integer id;
     private String name;
     private Timestamp createdAt;
 
-    @Override
-    public String toString() {
-        return "Stadium : " +
-                "id = " + id +
-                ", name = '" + name + '\'' +
-                ", createdAt = " + createdAt +
-                '/';
+    @Builder
+    public Stadium(Integer id, String name, Timestamp createdAt) {
+        this.id = id;
+        this.name = name;
+        this.createdAt = createdAt;
     }
+
+
 }

@@ -66,16 +66,12 @@ public class TeamDAO {
             PreparedStatement ps = conn.prepareStatement(findByAll);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                //    private Integer id;
-                //    private Integer stadiumId;
-                //    private String name;
-                //    private Timestamp createdAt;
-                Team team = new Team(
-                        rs.getInt("id"),
-                        rs.getInt("stadium_id"),
-                        rs.getString("name"),
-                        rs.getTimestamp("created_at")
-                );
+                Team team = Team.builder()
+                        .id(rs.getInt("id"))
+                        .stadiumId(rs.getInt("stadium_id"))
+                        .name(rs.getString("name"))
+                        .createdAt(rs.getTimestamp("created_at"))
+                        .build();
                 teamList.add(team);
             }
 
@@ -86,20 +82,20 @@ public class TeamDAO {
     }
 
     // stadiumId로 team 검색
-    public Team findByStadiumId() {
+    public Team findByStadiumId(Integer stadiumId) {
         Team team = null;
-
-        String findByOne = "select* from team where stadium_id = ?";
+        String findByStadiumId = "select* from team where stadium_id = ?";
         try {
-            PreparedStatement ps = conn.prepareStatement(findByOne);
+            PreparedStatement ps = conn.prepareStatement(findByStadiumId);
+            ps.setInt(1, stadiumId);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                team = new Team(
-                        rs.getInt("id"),
-                        rs.getInt("stadium_id"),
-                        rs.getString("name"),
-                        rs.getTimestamp("created_at")
-                );
+                team = Team.builder()
+                        .id(rs.getInt("id"))
+                        .stadiumId(rs.getInt("stadium_id"))
+                        .name(rs.getString("name"))
+                        .createdAt(rs.getTimestamp("created_at"))
+                        .build();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -109,33 +105,34 @@ public class TeamDAO {
 
     // join
     // stadium + team 목록 모두 검색
+    public List<TeamRespDTO> findByAllWithStadium() {
+        List<TeamRespDTO> teamRespDTOList = new ArrayList<>();
 
-    // 수정중....
-//    public List<TeamRespDTO> findByAllWithStadium() {
-//        List<TeamRespDTO> teamRespDTOList = new ArrayList<>();
-//
-//        String findByAllWithStadium = "select * from team";
-//        try {
-//            PreparedStatement ps = conn.prepareStatement(findByAllWithStadium);
-//            ResultSet rs = ps.executeQuery();
-//            while (rs.next()) {
-//                TeamRespDTO teamRespDTO = new TeamRespDTO(
-//                private Integer id;
-//                private String stadiumName;
-//                private Timestamp stadiumCreatedAt;
-//                private String teamName;
-//                private Timestamp teamCreatedAt;
-//                rs.getInt("id"),
-//                rs.getString("name"),
-//                rs.get
-//
-//                );
-//                teamRespDTOList.add(teamRespDTO);
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return teamRespDTOList;
+        String findByAllWithStadium = "select s.id, s.name as stadium_name, s.created_at as stadium_created_at, t.stadium_id, t.name as team_name, t.created_at as team_created_at\n" +
+                "from team as t\n" +
+                "right outer join stadium as s\n" +
+                "on t.stadium_id = s.id\n" +
+                "order by id asc";
+        try {
+            PreparedStatement ps = conn.prepareStatement(findByAllWithStadium);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                TeamRespDTO teamRespDTO = TeamRespDTO.builder()
+                        .id(rs.getInt("id"))
+                        .stadiumName(rs.getString("stadium_name"))
+                        .stadiumCreatedAt(rs.getTimestamp("stadium_created_at"))
+                        .stadiumId(rs.getInt("stadium_id"))
+                        .teamName(rs.getString("team_name"))
+                        .teamCreatedAt(rs.getTimestamp("team_created_at"))
+                        .build();
+
+                teamRespDTOList.add(teamRespDTO);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return teamRespDTOList;
     }
 }
+

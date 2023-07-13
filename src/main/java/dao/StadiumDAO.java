@@ -20,13 +20,13 @@ public class StadiumDAO {
         try {
             PreparedStatement ps = conn.prepareStatement(insert);
             ps.setString(1, name);
-            ps.executeUpdate();
+            int result = ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // 다른 이름으로 변경
+    // 다른 이름으로 변경에 대한 update
     public void update(String name, Integer id) {
         String update = "update stadium set name =? where id=?";
         try {
@@ -39,7 +39,7 @@ public class StadiumDAO {
         }
 
     }
-    // id로 stadium 삭제
+    // id로 stadium 삭제에 대한 delete
     public void delete(Integer id) {
         String delete = "delete from stadium where id=?";
         try {
@@ -74,14 +74,14 @@ public class StadiumDAO {
         return stadiumList;
     }
 
-    // id로 stadium 검색
-    public Stadium findById(Integer id) {
+    // Id로 stadium 검색
+    public Stadium findByName(String name) {
         Stadium stadium = null;
 
-        String findByOne = "select * from stadium where id = ?";
+        String findByOne = "select * from stadium where name = ?";
         try {
             PreparedStatement ps = conn.prepareStatement(findByOne);
-            ps.setInt(1, id);
+            ps.setString(1, name);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 stadium = new Stadium(

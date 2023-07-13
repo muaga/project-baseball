@@ -22,6 +22,7 @@ public class DBConnection {
         return null;
     }
 
+    // 연결 확인
     public static void main(String[] args) {
         getInstance();
     }
